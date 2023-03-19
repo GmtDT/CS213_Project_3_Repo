@@ -21,3 +21,5 @@ public class TuitionManagerMain extends Application {
         launch();
     }
 }
+
+

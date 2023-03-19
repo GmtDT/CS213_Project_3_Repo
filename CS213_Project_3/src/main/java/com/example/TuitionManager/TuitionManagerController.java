@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
 public class TuitionManagerController {
+    private final Roster roster = new Roster();
+    private final Enrollment enrollment = new Enrollment();
 
     //Button Groups
     @FXML
@@ -43,7 +45,7 @@ public class TuitionManagerController {
     @FXML
     private RadioButton btNY;
     @FXML
-    private RadioButton btCN;
+    private RadioButton btCT;
     @FXML
     private CheckBox boxStudyAbroad;
     @FXML
@@ -79,6 +81,36 @@ public class TuitionManagerController {
 
     @FXML
     protected void onAddButtonClick() {
+        if(!isEnoughSelections()){
+            //output error msg
+            return;
+        }
+        if(btResident.isSelected()){
+            //create a resident student
+        }  else if(btTriState.isSelected()){
+            if(btNY.isSelected()){
+                String state = "NY";
+            } else{
+                String state = "CT";
+            }
+            //create tristate student
+        } else if(btInternational.isSelected()){
+            boolean studyAbroad = boxStudyAbroad.isSelected();
+            //create international study abroad or not study abroad.
+        } else{
+            //create non res
+        }
+        //add student
+    }
+
+    private boolean isEnoughSelections(){
+        if(btGroup_isResident == null){
+            return false;
+        }
+        if(btTriState.isSelected() && btGroup_State == null){
+            return false;
+        }
+        return true;
     }
 
     @FXML
@@ -143,5 +175,42 @@ public class TuitionManagerController {
 
     @FXML
     protected void onSemesterEndButtonClick() {
+    }
+
+    @FXML
+    protected void onResSelect() {
+        btTriState.setDisable(true);
+        btInternational.setDisable(true);
+        boxStudyAbroad.setDisable(true);
+        btNY.setDisable(true);
+        btCT.setDisable(true);
+        btNY.setSelected(false);
+        btCT.setSelected(false);
+        boxStudyAbroad.setSelected(false);
+        btTriState.setSelected(false);
+        btInternational.setSelected(false);
+    }
+
+    @FXML
+    protected void onNonResSelect() {
+        btTriState.setDisable(false);
+        btInternational.setDisable(false);
+    }
+
+    @FXML
+    protected void onTristateSelect() {
+        btNY.setDisable(false);
+        btCT.setDisable(false);
+        boxStudyAbroad.setDisable(true);
+        boxStudyAbroad.setSelected(false);
+    }
+
+    @FXML
+    protected void onInternationalSelect() {
+        btNY.setDisable(true);
+        btCT.setDisable(true);
+        btNY.setSelected(false);
+        btCT.setSelected(false);
+        boxStudyAbroad.setDisable(false);
     }
 }
