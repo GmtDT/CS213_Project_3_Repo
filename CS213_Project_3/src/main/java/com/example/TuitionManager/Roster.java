@@ -136,14 +136,16 @@ public class Roster {
      * Helper method for the print() methods below.
      * Prints out the roster sorted as it currently is.
      */
-    public void printRoster() {
+    public String printRoster() {
+        StringBuilder toReturn = new StringBuilder();
         for(int i = 0; i < this.size; i++) {
             if (this.roster[i] == null) {
-                return;
+                return "null print";
             } else {
-                System.out.println(this.roster[i].toString());
+                toReturn.append(this.roster[i].toString()).append("\n");
             }
         }
+        return toReturn.toString();
     }
 
     /**
@@ -181,7 +183,7 @@ public class Roster {
      * This is a modified version of the selection sort algorithm.
      * @param type the sort type that should be used.
      */
-    private void sort(SortType type)
+    void sort(SortType type)
     {
         int n = this.size;
         for (int i = 0; i < n-1; i++)

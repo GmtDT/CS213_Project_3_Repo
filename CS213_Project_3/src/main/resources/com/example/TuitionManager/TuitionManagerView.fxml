@@ -64,7 +64,7 @@
                               <TextField fx:id="fnameRoster" GridPane.columnIndex="1" />
                               <TextField fx:id="lnameRoster" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label prefHeight="17.0" prefWidth="289.0" text="Last Name" GridPane.rowIndex="1" />
-                              <DatePicker fx:id="dobRoster" prefHeight="26.0" prefWidth="448.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <DatePicker fx:id="dobRoster" editable="false" prefHeight="26.0" prefWidth="448.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label prefHeight="17.0" prefWidth="129.0" text="Date of Birth" GridPane.rowIndex="2" />
                               <Label prefHeight="17.0" prefWidth="130.0" text="Major" GridPane.rowIndex="3" />
                               <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -84,7 +84,7 @@
                                  </GridPane.margin>
                               </HBox>
                               <Label prefHeight="17.0" prefWidth="126.0" text="Credits Completed" GridPane.rowIndex="4" />
-                              <TextField GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <TextField fx:id="creditsRoster" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label prefHeight="17.0" prefWidth="129.0" text="Status" GridPane.rowIndex="5" />
                               <RadioButton fx:id="btResident" alignment="CENTER_LEFT" mnemonicParsing="false" onAction="#onResSelect" prefHeight="18.0" prefWidth="108.0" text="Resident" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <toggleGroup>
@@ -156,7 +156,7 @@
                               <Label text="First Name" />
                               <TextField fx:id="fnameEnrollment" GridPane.columnIndex="1" />
                               <TextField fx:id="lnameEnrollment" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <DatePicker fx:id="dobEnrollment" prefHeight="26.0" prefWidth="464.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <DatePicker fx:id="dobEnrollment" editable="false" prefHeight="26.0" prefWidth="464.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Label text="Last Name" GridPane.rowIndex="1" />
                               <Label text="Date of Birth" GridPane.rowIndex="2" />
                               <Label text="Credits" GridPane.rowIndex="3" />
@@ -198,7 +198,7 @@
                               <TextField fx:id="fnameScholar" GridPane.columnIndex="1" />
                               <TextField fx:id="lnameScholar" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <TextField fx:id="amountScholar" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <DatePicker fx:id="dobScholar" prefHeight="26.0" prefWidth="538.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <DatePicker fx:id="dobScholar" editable="false" prefHeight="26.0" prefWidth="538.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <Button mnemonicParsing="false" onAction="#onUpdateButtonClick" text="Update Scholarship Amount" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                            </children>
                         </GridPane>
