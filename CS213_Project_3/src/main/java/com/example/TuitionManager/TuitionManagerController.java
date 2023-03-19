@@ -2,7 +2,6 @@ package com.example.TuitionManager;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
 
 public class TuitionManagerController {
 
@@ -47,7 +46,8 @@ public class TuitionManagerController {
     private RadioButton btCN;
     @FXML
     private CheckBox boxStudyAbroad;
-
+    @FXML
+    private TextArea rosterOutput;
 
     //Enrollment Tab
     @FXML
@@ -58,6 +58,8 @@ public class TuitionManagerController {
     private DatePicker dobEnrollment;
     @FXML
     private TextField creditsEnrollment;
+    @FXML
+    private TextArea enrollmentOutput;
 
     //Scholarship Tab
     @FXML
@@ -68,6 +70,12 @@ public class TuitionManagerController {
     private DatePicker dobScholar;
     @FXML
     private TextField amountScholar;
+    @FXML
+    private TextArea scholarOutput;
+
+    //Display Tab
+    @FXML
+    private TextArea displayOutput;
 
     @FXML
     protected void onAddButtonClick() {
