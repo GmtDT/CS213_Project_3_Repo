@@ -400,6 +400,10 @@ public class TuitionManagerController {
         String reformattedDOB = dobReformater(dobScholar.getValue().toString());
         Profile profile = new Profile(lnameScholar.getText(),fnameScholar.getText(),reformattedDOB);
         Student student = this.roster.getStudent(profile);
+        if(student == null){
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not in the Roster.");
+            return;
+        }
         if(isNotNumeric(amountScholar.getText())){
             scholarOutput.setText("Amount is not an integer.");
             return;
