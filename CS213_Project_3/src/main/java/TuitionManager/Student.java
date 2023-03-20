@@ -152,9 +152,9 @@ public abstract class Student implements Comparable<Student> {
      */
     public String residency() {
         if(!isResident()) {
-            return "(non-resident)" + " " +  this.getArea();
+            return "(Non-Resident)" + " " +  this.getArea();
         } else {
-            return "(resident)";
+            return "(Resident)";
         }
     }
 

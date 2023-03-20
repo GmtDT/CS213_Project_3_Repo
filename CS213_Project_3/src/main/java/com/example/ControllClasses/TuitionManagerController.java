@@ -250,6 +250,27 @@ public class TuitionManagerController {
 
     /**
      * Helper method to check if the user has selected a valid
+     * amount of inputs in the Enrollment tab for the desired action.
+     * @return true is valid amount of inputs, false if not.
+     */
+    private boolean isValidEnrollmentSelectionAddition() {
+        if (fnameEnrollment == null || fnameEnrollment.getText().trim().isEmpty() || isNotText(fnameEnrollment.getText())) {
+            enrollmentOutput.setText("Please enter a valid first name.");
+            return false;
+        }
+        if (lnameEnrollment == null || lnameEnrollment.getText().trim().isEmpty() || isNotText(lnameEnrollment.getText())) {
+            enrollmentOutput.setText("Please enter a valid last name.");
+            return false;
+        }
+        if (dobEnrollment.getValue() == null || dobEnrollment.getValue().toString().trim().isEmpty()) {
+            enrollmentOutput.setText("Please enter a valid date of birth.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Helper method to check if the user has selected a valid
      * amount of inputs in the Scholarship tab for the desired action.
      * @return true is valid amount of inputs, false if not.
      */
@@ -374,9 +395,12 @@ public class TuitionManagerController {
      */
     @FXML
     protected void onDropButtonClick() {
-        Profile dropProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),dobEnrollment.getValue().toString());
-        EnrollStudent dropStudent = this.enrollment.getEnrollStudent(dropProfile);
+        if(!isValidEnrollmentSelectionAddition()){
+            return;
+        }
         String reformattedDOB = dobReformater(dobEnrollment.getValue().toString());
+        Profile dropProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),reformattedDOB);
+        EnrollStudent dropStudent = this.enrollment.getEnrollStudent(dropProfile);
         if (!(dropStudent == null)) {
             if (this.enrollment.contains(dropStudent)) {
                 this.enrollment.remove(dropStudent);
@@ -400,20 +424,8 @@ public class TuitionManagerController {
         String reformattedDOB = dobReformater(dobScholar.getValue().toString());
         Profile profile = new Profile(lnameScholar.getText(),fnameScholar.getText(),reformattedDOB);
         Student student = this.roster.getStudent(profile);
-        if(student == null){
-            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not in the Roster.");
-            return;
-        }
-        if(isNotNumeric(amountScholar.getText())){
-            scholarOutput.setText("Amount is not an integer.");
-            return;
-        }
-        if(!student.isResident() || !(enrollment.getEnrollStudent(profile).getCreditsEnrolled() >= TuitionValues.FULL_TIME_MIN.getValue())){
-            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " part time student is not eligible for the scholarship.");
-            return;
-        }
-        if(Integer.parseInt(amountScholar.getText()) > TuitionValues.MAX_SCHOLARSHIP.getValue() || Integer.parseInt(amountScholar.getText()) <= 0){
-            scholarOutput.setText(amountScholar.getText() + ": invalid amount.");
+        EnrollStudent enrollStudent = this.enrollment.getEnrollStudent(profile);
+        if(!isValidUpdate(student,enrollStudent,reformattedDOB,profile)){
             return;
         }
         Resident resident = (Resident) student;
@@ -440,6 +452,39 @@ public class TuitionManagerController {
     }
 
     /**
+     * Helper method for the onUpdateButtonClick method that
+     * checks if the student is valid before continuing.
+     * @param student student to check
+     * @param enrollStudent enrollStudent to check
+     * @param reformattedDOB reformattedDOB to check
+     * @param profile profile to check
+     * @return true if valid, false if not.
+     */
+    private boolean isValidUpdate(Student student, EnrollStudent enrollStudent, String reformattedDOB, Profile profile) {
+        if(student == null){
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not in the Roster.");
+            return false;
+        }
+        if(enrollStudent == null){
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not in the Enrollment.");
+            return false;
+        }
+        if(isNotNumeric(amountScholar.getText())){
+            scholarOutput.setText("Amount is not an integer.");
+            return false;
+        }
+        if(!student.isResident() || !(enrollment.getEnrollStudent(profile).getCreditsEnrolled() >= TuitionValues.FULL_TIME_MIN.getValue())){
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " part time student is not eligible for the scholarship.");
+            return false;
+        }
+        if(Integer.parseInt(amountScholar.getText()) > TuitionValues.MAX_SCHOLARSHIP.getValue() || Integer.parseInt(amountScholar.getText()) <= 0){
+            scholarOutput.setText(amountScholar.getText() + ": invalid amount.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Runs when the Print by Profile button is clicked in the
      * Display tab. Prints the roster sorted by profile.
      */
@@ -447,10 +492,10 @@ public class TuitionManagerController {
     protected void onPrintButtonClick() {
         if(!this.roster.isEmpty()){
             this.roster.sort(SortType.PROFILE);
-            displayOutput.setText("Roster sorted by profile:" + "\n" + this.roster.printRoster());
+            displayOutput.setText("Roster sorted by Profile:\n" + "\n" + this.roster.printRoster());
             return;
         }
-        displayOutput.setText("The roster is empty.");
+        displayOutput.setText("The Roster is empty!");
     }
 
     /**
@@ -461,10 +506,10 @@ public class TuitionManagerController {
     protected void onPrintMajorButtonClick() {
         if(!this.roster.isEmpty()){
             this.roster.sort(SortType.MAJOR);
-            displayOutput.setText("Roster sorted by major:" + "\n" + this.roster.printRoster());
+            displayOutput.setText("Roster sorted by Major:\n" + "\n" + this.roster.printRoster());
             return;
         }
-        displayOutput.setText("The roster is empty.");
+        displayOutput.setText("The Roster is empty!");
     }
 
     /**
@@ -475,10 +520,10 @@ public class TuitionManagerController {
     protected void onPrintStandingButtonClick() {
         if(!this.roster.isEmpty()){
             this.roster.sort(SortType.STANDING);
-            displayOutput.setText("Roster sorted by standing:" + "\n" + this.roster.printRoster());
+            displayOutput.setText("Roster sorted by Standing:\n" + "\n" + this.roster.printRoster());
             return;
         }
-        displayOutput.setText("The roster is empty.");
+        displayOutput.setText("The Roster is empty!");
     }
 
     /**
@@ -550,7 +595,7 @@ public class TuitionManagerController {
      * @param school school that you want to list from.
      */
     private void printList(String school){
-            displayOutput.setText(this.roster.list(school));
+            displayOutput.setText("Students in " + school + " :\n" + this.roster.list(school));
     }
 
     /**
@@ -738,7 +783,7 @@ public class TuitionManagerController {
             File studentList = new File("studentList.txt");
             Scanner fileScanner = new Scanner(studentList);
             String lineCommand;
-            toReturn.append("Students loaded to the roster." + "\n");
+            toReturn.append("Students loaded to the Roster:\n" + "\n");
             while (fileScanner.hasNextLine()){
                 lineCommand = fileScanner.nextLine();
                 Scanner lineScanner = new Scanner(lineCommand);

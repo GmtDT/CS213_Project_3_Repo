@@ -210,7 +210,7 @@ public class Roster {
             }
         }
         if(amount == 0){
-            return("\n" + "There are no students in the Roster with that school.");
+            return("There are no students in the Roster with that school.");
         }
         return toReturn.toString();
     }

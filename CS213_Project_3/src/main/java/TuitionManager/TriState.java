@@ -75,6 +75,6 @@ public class TriState extends NonResident{
      */
     @Override
     public String getArea() {
-        return "(tri-state:" + this.state + ") ";
+        return "(Tri-State:" + this.state + ") ";
     }
 }

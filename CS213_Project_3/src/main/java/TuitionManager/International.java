@@ -80,7 +80,7 @@ public class International extends NonResident {
      */
     @Override
     public String getArea() {
-        return "(international" + isAbroad();
+        return "(International" + isAbroad();
     }
 
     /**
@@ -90,7 +90,7 @@ public class International extends NonResident {
      */
     private String isAbroad() {
         if(this.isStudyAbroad){
-            return ": study abroad)";
+            return ": Study Abroad)";
         } else {
             return ")";
         }

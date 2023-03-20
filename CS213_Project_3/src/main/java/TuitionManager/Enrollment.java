@@ -157,7 +157,7 @@ public class Enrollment {
         double tuition;
         int creditsEnrolled;
         if(isEmpty()){
-            return("Student roster is empty!");
+            return("Enrollment is empty!");
         }
         for(EnrollStudent enrolled : this.enrollStudents) {
             if(!(enrolled == null)){
@@ -194,7 +194,7 @@ public class Enrollment {
     public String semesterEnd(Roster roster) {
         StringBuilder toReturn = new StringBuilder();
         int creditsEnrolled;
-        toReturn.append("Credits completed have been updated." + "\n");
+        toReturn.append("Credits completed have been updated.\n" + "\n");
         for(EnrollStudent enrolled : this.enrollStudents) {
             if(!(enrolled == null)){
                 Student currentStudent = roster.getStudent(enrolled.getProfile());
