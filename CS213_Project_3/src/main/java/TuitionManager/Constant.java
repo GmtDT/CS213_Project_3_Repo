@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * The Constant Enum class stores all the variables

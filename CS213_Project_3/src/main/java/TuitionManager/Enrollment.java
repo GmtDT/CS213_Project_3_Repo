@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 import java.text.DecimalFormat;
 

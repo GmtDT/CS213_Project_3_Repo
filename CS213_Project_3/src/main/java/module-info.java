@@ -4,6 +4,8 @@ module com.example.javafxdemo {
     requires junit;
 
 
-    opens com.example.TuitionManager to javafx.fxml;
-    exports com.example.TuitionManager;
+    opens com.example.ControllClasses to javafx.fxml;
+    exports com.example.ControllClasses;
+    exports TuitionManager;
+    opens TuitionManager to javafx.fxml;
 }

@@ -1,5 +1,6 @@
-package com.example.TuitionManager;
+package com.example.ControllClasses;
 
+import TuitionManager.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
@@ -256,7 +257,7 @@ public class TuitionManagerController {
         }
         String dob = dobReformater(dobRoster.getValue().toString());
         Profile profile = new Profile(lnameRoster.getText(), fnameRoster.getText(), dob);
-        Resident tempResident = new Resident(profile,Major.UNDEFINED.toString(),Constant.UNDEFINED_CREDITS.getValue());
+        Resident tempResident = new Resident(profile,Major.UNDEFINED.toString(), Constant.UNDEFINED_CREDITS.getValue());
         String reformattedDOB = dobReformater(dobRoster.getValue().toString());
         if (this.roster.contains(tempResident)) {                        //checks if the student is actually in the roster.
             if(this.roster.replaceMajor(tempResident,getSelectedMajor())){            //checks if the major can/should be replaced.

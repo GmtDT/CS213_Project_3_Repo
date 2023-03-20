@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * Blueprint for profile objects: stores the last name,

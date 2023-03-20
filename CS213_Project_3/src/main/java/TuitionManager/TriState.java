@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * The TriState class is a blueprint for a Tri-State

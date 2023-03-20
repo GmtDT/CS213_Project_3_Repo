@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package com.example.ControllClasses;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

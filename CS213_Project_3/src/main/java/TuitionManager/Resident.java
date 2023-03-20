@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * The Resident class is a blueprint for a Resident

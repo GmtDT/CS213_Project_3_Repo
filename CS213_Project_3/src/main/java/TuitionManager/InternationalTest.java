@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

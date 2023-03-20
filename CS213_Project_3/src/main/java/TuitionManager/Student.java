@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * Blueprint for student objects, stores their profile, major,

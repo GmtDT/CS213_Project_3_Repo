@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 public enum OutputTypes {
     ROSTER,

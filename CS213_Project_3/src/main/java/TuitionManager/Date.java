@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 import java.util.Calendar;
 import java.util.StringTokenizer;
 

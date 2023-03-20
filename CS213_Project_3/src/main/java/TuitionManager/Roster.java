@@ -1,4 +1,4 @@
-package com.example.TuitionManager;
+package TuitionManager;
 
 /**
  * The Roster class acts as a database for the students, storing
@@ -183,7 +183,7 @@ public class Roster {
      * This is a modified version of the selection sort algorithm.
      * @param type the sort type that should be used.
      */
-    void sort(SortType type)
+    public void sort(SortType type)
     {
         int n = this.size;
         for (int i = 0; i < n-1; i++)
