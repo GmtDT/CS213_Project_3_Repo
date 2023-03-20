@@ -474,7 +474,7 @@ public class TuitionManagerController {
             return false;
         }
         if(!student.isResident() || !(enrollment.getEnrollStudent(profile).getCreditsEnrolled() >= TuitionValues.FULL_TIME_MIN.getValue())){
-            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " part time student is not eligible for the scholarship.");
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not eligible for the scholarship.");
             return false;
         }
         if(Integer.parseInt(amountScholar.getText()) > TuitionValues.MAX_SCHOLARSHIP.getValue() || Integer.parseInt(amountScholar.getText()) <= 0){
