@@ -6,6 +6,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import java.io.IOException;
 
+/**
+ * Driver class to run Project 3
+ * @author Dylan Turner, Noor Hasan
+ */
 public class TuitionManagerMain extends Application {
     @Override
     public void start(Stage stage) throws IOException {
