@@ -228,17 +228,19 @@ public class Roster {
      * are in the specified school and displays them.
      @param school school that students should belong to.
      */
-    public void list(String school) {
+    public String list(String school) {
         int amount = 0;
+        StringBuilder toReturn = new StringBuilder();
         for(int i = 0; i < this.size; i++) {
             if (this.roster[i] != null && this.roster[i].getMajor().getSchool().equals(school)) {
-                System.out.println(this.roster[i].toString());
+                toReturn.append("\n").append(this.roster[i].toString());
                 amount++;
             }
         }
         if(amount == 0){
-            System.out.println("There are no students in the Roster with that school.");
+            return("\n" + "There are no students in the Roster with that school.");
         }
+        return toReturn.toString();
     }
 
     /**
@@ -247,6 +249,7 @@ public class Roster {
      * @param major the major that it should be changed to.
      */
     public boolean replaceMajor(Student student, String major){
+        System.out.println(major); //asdklajnsfjandsgk askg ars gjkae
         int position = find(student);
         if(position != -1){
             if(this.roster[position].getMajor().toString().equals(major)){ System.out.println("first catch"); return false;}

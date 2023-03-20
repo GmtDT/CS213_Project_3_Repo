@@ -106,6 +106,9 @@ public class TuitionManagerController {
                 } else{
                     newStudent = new NonResident(newProfile, getSelectedMajor(), creditsCompleted);
                 }
+        if(!isAllowedDate(newStudent)){
+            return;
+        }
         if(this.roster.add(newStudent)){
             rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " was added to the roster.");
             return;
@@ -120,7 +123,7 @@ public class TuitionManagerController {
         } else if(btCS.isSelected()){
             selectedMajor = "CS";
         } else if(btECE.isSelected()){
-            selectedMajor = "ECE";
+            selectedMajor = "EE";
         } else if(btITI.isSelected()){
             selectedMajor = "ITI";
         } else {
@@ -218,9 +221,6 @@ public class TuitionManagerController {
 
     @FXML
     protected void onChangeButtonClick() {
-        if (!isValidMajor(getSelectedMajor())) {                     //checks if the major is valid first.
-            return;
-        }
         Profile profile = new Profile(lnameRoster.getText(), fnameRoster.getText(), dobRoster.getValue().toString());
         Resident tempResident = new Resident(profile,Major.UNDEFINED.toString(),Constant.UNDEFINED_CREDITS.getValue());
         if (this.roster.contains(tempResident)) {                        //checks if the student is actually in the roster.
@@ -358,22 +358,27 @@ public class TuitionManagerController {
 
     @FXML
     protected void onRBSButtonClick() {
+        printList("RBS");
     }
 
     @FXML
     protected void onSASButtonClick() {
+        printList("SAS");
     }
 
     @FXML
     protected void onSCIButtonClick() {
+        printList("SC&I");
     }
 
     @FXML
     protected void onSOEButtonClick() {
+        printList("SOE");
     }
 
     @FXML
     protected void onPrintEnrolledButtonClick() {
+
     }
 
     @FXML
@@ -382,6 +387,15 @@ public class TuitionManagerController {
 
     @FXML
     protected void onSemesterEndButtonClick() {
+    }
+
+
+    /**
+     * Prints a list of the students from a specified school.
+     * @param school school that you want to list from.
+     */
+    private void printList(String school){
+            displayOutput.setText("* Students in " + school + " *" + this.roster.list(school) + "\n" + "* end of list *");
     }
 
     @FXML
@@ -467,17 +481,53 @@ public class TuitionManagerController {
     }
 
     /**
-     * Helper method for isAllowed() method, checks if a major is valid.
-     * @param major the major in question.
-     * @return false if major is not in the Major Enum class, true if it is.
+     * Helper method for the add() method, checks if a student is allowed to
+     * be entered into the roster.
+     *
+     * @param student student's date of birth.
+     * @return false if the student fails any checks, true otherwise.
      */
-    private boolean isValidMajor (String major){
-        for (Major validMajor : Major.values()) {
-            if (major.toUpperCase().equals(validMajor.toString())) {
-                return true;
-            }
+    private boolean isAllowedDate(Student student){
+        Date birthday = student.getProfile().getDob();
+        Date today = new Date();
+        String dob = birthday.toString();
+        if (!birthday.isValid()) {                      //checks if birthday is a valid date.
+            rosterOutput.setText("DOB invalid " + dob +  " not a valid calendar date!");
+            return false;
         }
-        System.out.println("Major code invalid: " + major);
-        return false;
+        if (birthday.compareTo(today) >= 0) {           //checks if birthday is beyond current date.
+            rosterOutput.setText("DOB invalid " + dob + " not a valid calendar date!");
+            return false;
+        }
+        if (!isAllowedAge(today, birthday)) {           //checks if birthday does not meet age requirement.
+            rosterOutput.setText("DOB invalid: " + dob + " younger than 16 years old.");
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Helper method for isAllowed() method, checks if student is allowed age.
+     * param today date object containing current day.
+     * @param dob the student's date of birth.
+     * @return false if the student is too young, true otherwise.
+     */
+    private boolean isAllowedAge (Date today, Date dob){
+        int yearDifference = today.getYear() - dob.getYear();
+        int monthDifference = today.getMonth() - dob.getMonth();
+        int dayDifference = today.getDay() - dob.getDay();
+        if (yearDifference > Constant.MINIMUM_AGE.getValue()) {         //checks if student is of age.
+            return true;
+        }
+        if (yearDifference < Constant.MINIMUM_AGE.getValue()) {
+            return false;
+        }
+        if (monthDifference > 0) {
+            return true;
+        }
+        if (monthDifference < 0) {
+            return false;
+        }
+        return dayDifference >= 0;
     }
 }
