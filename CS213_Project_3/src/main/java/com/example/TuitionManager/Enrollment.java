@@ -135,42 +135,47 @@ public class Enrollment {
      * Prints out the enrollment array as a list in
      * string representation, in the same order of the array.
      */
-    public void print() {
+    public String print() {
+        StringBuilder toReturn = new StringBuilder();
         if(!isEmpty()){
-            System.out.println("** Enrollment **");
             for(int i = 0; i < this.size; i++){
-                System.out.println(enrollStudents[i].toString() + ": credits enrolled: " + enrollStudents[i].getCreditsEnrolled());
+                toReturn.append(enrollStudents[i].toString() + ": credits enrolled: " + enrollStudents[i].getCreditsEnrolled() + "\n");
             }
-            System.out.println("** end of enrollment **");
-            return;
+            return toReturn.toString();
         }
-        System.out.println("Enrollment is empty!");
+        return("Enrollment is empty!");
     }
 
     /**
      * Prints out the tuition due for each enrolled student in the enrollment array.
      * @param roster reference to the Roster from the TuitionManager.
      */
-    public void printTuition(Roster roster) {
+    public String printTuition(Roster roster) {
+        StringBuilder toReturn = new StringBuilder();
         double tuition;
         int creditsEnrolled;
         if(isEmpty()){
-            System.out.println("Student roster is empty!");
-            return;
+            return("Student roster is empty!");
         }
-        System.out.println("** Tuition due **");
         for(EnrollStudent enrolled : this.enrollStudents) {
             if(!(enrolled == null)){
                 Student currentStudent = roster.getStudent(enrolled.getProfile());
                 tuition = currentStudent.tuitionDue(enrolled.getCreditsEnrolled());
                 creditsEnrolled = enrolled.getCreditsEnrolled();
-                System.out.println(currentStudent.getProfile().toString() + " "
-                        + currentStudent.getType() + " enrolled " + creditsEnrolled
-                        + " credits: tuition due: $" + formatDouble(tuition));
+                toReturn.append(currentStudent.getProfile().toString()).append(" ")
+                        .append(currentStudent.getType()).append(" enrolled ")
+                        .append(creditsEnrolled).append(" credits: tuition due: $")
+                        .append(formatDouble(tuition)).append("\n");
             }
         }
-        System.out.println("** end of tuition due **");
+        return(toReturn.toString());
     }
+
+    /**
+     * kjasdgbshkladgsadbhljbfladshfbg hjlafdsbghjlasfbdghjlasdbghjlasdbghjlsbagfhjlsdfbjlabl
+     * @param t
+     * @return
+     */
     public String formatDouble(double t){
         String pattern = ".00";
         DecimalFormat decimalFormat = new DecimalFormat(pattern);
@@ -183,20 +188,20 @@ public class Enrollment {
      * and prints out a list of all students who are now eligible for graduation.
      * @param roster reference to the Roster from the TuitionManager.
      */
-    public void semesterEnd(Roster roster) {
+    public String semesterEnd(Roster roster) {
+        StringBuilder toReturn = new StringBuilder();
         int creditsEnrolled;
-        System.out.println("Credits completed has been updated.");
-        System.out.println("** list of students eligible for graduation **");
+        toReturn.append("Credits completed have been updated." + "\n");
         for(EnrollStudent enrolled : this.enrollStudents) {
             if(!(enrolled == null)){
                 Student currentStudent = roster.getStudent(enrolled.getProfile());
                 creditsEnrolled = enrolled.getCreditsEnrolled();
                 currentStudent.addCredits(creditsEnrolled);
                 if(currentStudent.getCredits() >= 120) {
-                    System.out.println(currentStudent);
+                    toReturn.append(currentStudent).append(" has graduated.").append("\n");
                 }
             }
         }
-        System.out.println("** end of graduation list");
+        return(toReturn.toString());
     }
 }

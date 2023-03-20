@@ -128,7 +128,7 @@ public abstract class Student implements Comparable<Student> {
     public String toString() {
         return (this.profile.toString() + " (" + this.major.getMajorCode() + " "
                 + this.major + " " + this.major.getSchool() + ") "
-                + "creditCompleted: " + creditCompleted
+                + "Credits Completed: " + creditCompleted
                 + " " + "(" + this.getStanding() + ")")
                 + " " + this.residency();
     }

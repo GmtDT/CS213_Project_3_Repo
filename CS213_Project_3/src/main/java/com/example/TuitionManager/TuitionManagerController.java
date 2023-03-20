@@ -3,6 +3,11 @@ package com.example.TuitionManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
 public class TuitionManagerController {
     private final Roster roster = new Roster();
     private final Enrollment enrollment = new Enrollment();
@@ -88,7 +93,8 @@ public class TuitionManagerController {
             return;
         }
         Student newStudent;
-        Profile newProfile = new Profile(lnameRoster.getText(),fnameRoster.getText(),dobRoster.getValue().toString());
+        String dob = dobReformater(dobRoster.getValue().toString());
+        Profile newProfile = new Profile(lnameRoster.getText(),fnameRoster.getText(), dob);
         String state;
         int creditsCompleted = Integer.parseInt(creditsRoster.getText());
         if(btResident.isSelected()){
@@ -109,11 +115,20 @@ public class TuitionManagerController {
         if(!isAllowedDate(newStudent)){
             return;
         }
+        String reformattedDOB = dobReformater(dobRoster.getValue().toString());
         if(this.roster.add(newStudent)){
-            rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " was added to the roster.");
+            rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " was added to the roster.");
             return;
         }
-        rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " is already in the roster.");
+        rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " is already in the roster.");
+    }
+
+    private String dobReformater(String wrongDOB) {
+        StringTokenizer splitDate = new StringTokenizer(wrongDOB, "-");
+        int year = Integer.parseInt(splitDate.nextToken());
+        int month = Integer.parseInt(splitDate.nextToken());
+        int day = Integer.parseInt(splitDate.nextToken());
+        return(month + "/" + day + "/" + year);
     }
 
     private String getSelectedMajor() {
@@ -165,6 +180,21 @@ public class TuitionManagerController {
         return true;
     }
 
+    private boolean isValidRosterSelectionAddition() {
+        if (fnameRoster == null || fnameRoster.getText().trim().isEmpty() || isNotText(fnameRoster.getText())) { // need to make it so u cant type random symbols.
+            rosterOutput.setText("Please enter a valid first name.");
+            return false;
+        }
+        if (lnameRoster == null || lnameRoster.getText().trim().isEmpty() || isNotText(lnameRoster.getText())) {
+            rosterOutput.setText("Please enter a valid last name.");
+            return false;
+        }
+        if (dobRoster.getValue() == null || dobRoster.getValue().toString().trim().isEmpty()) {
+            rosterOutput.setText("Please enter a valid date of birth.");
+            return false;
+        }
+        return true;
+    }
     private boolean isValidEnrollmentSelection() {
         if(fnameEnrollment == null || fnameEnrollment.getText().trim().isEmpty() || isNotText(fnameEnrollment.getText())){ // need to make it so u cant type random symbols.
             enrollmentOutput.setText("Please enter a valid first name.");
@@ -207,7 +237,11 @@ public class TuitionManagerController {
 
     @FXML
     protected void onRemoveButtonClick() {
-        Profile newProfile = new Profile(lnameRoster.getText(),fnameRoster.getText(),dobRoster.getValue().toString());
+        if(!isValidRosterSelectionAddition()){
+            return;
+        }
+        String dob = dobReformater(dobRoster.getValue().toString());
+        Profile newProfile = new Profile(lnameRoster.getText(),fnameRoster.getText(),dob);
         Student newStudent = this.roster.getStudent(newProfile);
         if(newStudent != null) {
             if (this.roster.remove(newStudent)) {
@@ -221,7 +255,8 @@ public class TuitionManagerController {
 
     @FXML
     protected void onChangeButtonClick() {
-        Profile profile = new Profile(lnameRoster.getText(), fnameRoster.getText(), dobRoster.getValue().toString());
+        String dob = dobReformater(dobRoster.getValue().toString());
+        Profile profile = new Profile(lnameRoster.getText(), fnameRoster.getText(), dob);
         Resident tempResident = new Resident(profile,Major.UNDEFINED.toString(),Constant.UNDEFINED_CREDITS.getValue());
         if (this.roster.contains(tempResident)) {                        //checks if the student is actually in the roster.
             if(this.roster.replaceMajor(tempResident,getSelectedMajor())){            //checks if the major can/should be replaced.
@@ -236,7 +271,7 @@ public class TuitionManagerController {
 
     @FXML
     protected void onLoadButtonClick() {
-
+        readFile();
     }
 
     @FXML
@@ -253,7 +288,7 @@ public class TuitionManagerController {
                 Student student = this.roster.getStudent(enrollProfile);
                 if(student.isValid(enrollCreditsInt)){
                     this.enrollment.setEnrollCredits(enrollStudent, enrollCreditsInt);
-                    enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " enrolled " + enrollCreditsInt + " credits.");
+                    enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " enrolled credits changed to " + enrollCreditsInt);
                 }else{
                     enrollmentOutput.setText(student.getType() + " " + enrollCreditsInt + ": invalid credit hours.");
                 }
@@ -378,24 +413,25 @@ public class TuitionManagerController {
 
     @FXML
     protected void onPrintEnrolledButtonClick() {
-
+        displayOutput.setText(this.enrollment.print());
     }
 
     @FXML
     protected void onPrintTuitionButtonClick() {
+        displayOutput.setText(this.enrollment.printTuition(this.roster));
     }
 
     @FXML
     protected void onSemesterEndButtonClick() {
+        displayOutput.setText(this.enrollment.semesterEnd(this.roster));
     }
-
 
     /**
      * Prints a list of the students from a specified school.
      * @param school school that you want to list from.
      */
     private void printList(String school){
-            displayOutput.setText("* Students in " + school + " *" + this.roster.list(school) + "\n" + "* end of list *");
+            displayOutput.setText(this.roster.list(school));
     }
 
     @FXML
@@ -529,5 +565,118 @@ public class TuitionManagerController {
             return false;
         }
         return dayDifference >= 0;
+    }
+
+    private String processCommand(Scanner linescanner, String operationCode) {
+        switch(operationCode){
+            case "AR":                                                     // add a Resident student, for example, AR John Doe 4/3/2003 CS 29
+                return(addResident(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
+            case "AN":                                                     // add a NonResident student, for example, AN Leo Jones 4/21/2006 ITI 20
+                return(addNonResident(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
+            case "AT":                                                     // add a Tri state student, for example, AT Emma Miller 2/28/2003 CS 15 NY
+                return(addTriState(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
+            case "AI":                                                     // add an International student, for example, AI Oliver Chang 11/30/2000 BAIT 78 false
+                return(addInternational(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
+            default :
+                return("shouldn't get here");
+        }
+    }
+
+    /**
+     * Reads from an external file and recursively calls read
+     * commands. In this case of project 2, it adds a
+     * list of students to the roster.
+     */
+    private void readFile() {
+        StringBuilder toReturn = new StringBuilder();
+        try {
+            File studentList = new File("studentList.txt");
+            Scanner fileScanner = new Scanner(studentList);
+            String lineCommand;
+            toReturn.append("Students loaded to the roster." + "\n");
+            while (fileScanner.hasNextLine()){
+                lineCommand = fileScanner.nextLine();
+                Scanner lineScanner = new Scanner(lineCommand);
+                lineScanner.useDelimiter(",|\n");
+                String operationCode = "A" + lineScanner.next();
+                toReturn.append(processCommand(lineScanner, operationCode));
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        rosterOutput.setText(toReturn.toString());
+    }
+
+    /**
+     * Adds a student to the Roster if it passes all the validity checks.
+     * @param student student to be added.
+     */
+    private String add(Student student) {
+        StringBuilder toReturn = new StringBuilder();
+        String fname = student.getProfile().getFname();
+        String lname = student.getProfile().getLname();
+        String dob = student.getProfile().getDob().toString();
+        if (this.roster.add(student))
+            toReturn.append(fname).append(" ").append(lname).append(" ").append(dob).append(" added to the Roster." + "\n");
+        return(toReturn.toString());
+    }
+
+    /**
+     * Adds a Resident to the roster if it passes all validity checks.
+     * @param fname first name of the student.
+     * @param lname last name of the student.
+     * @param dob date of birth of the student.
+     * @param major major of the student.
+     * @param creditsCompleted amount of credits completed by the student.
+     */
+    private String addResident(String fname, String lname, String dob, String major, String creditsCompleted) {
+        Profile newProfile = new Profile(lname,fname,dob);
+        Resident newResident = new Resident(newProfile, major, Integer.parseInt(creditsCompleted));
+        return(add(newResident));
+    }
+
+    /**
+     * Adds a Non-Resident to the roster if it passes all validity checks.
+     * @param fname first name of the student.
+     * @param lname last name of the student.
+     * @param dob date of birth of the student.
+     * @param major major of the student.
+     * @param creditsCompleted amount of credits completed by the student.
+     */
+    private String addNonResident(String fname, String lname, String dob, String major, String creditsCompleted) {
+        Profile newProfile = new Profile(lname,fname,dob);
+        NonResident newNonResident = new NonResident(newProfile, major, Integer.parseInt(creditsCompleted));
+        return(add(newNonResident));
+    }
+
+    /**
+     * Adds a Tri-State student to the roster if it passes all validity checks.
+     * @param fname first name of the student.
+     * @param lname last name of the student.
+     * @param dob date of birth of the student.
+     * @param major major of the student.
+     * @param creditsCompleted amount of credits completed by the student.
+     * @param state state where the student lives.
+     */
+    private String addTriState(String fname, String lname, String dob, String major, String creditsCompleted,String state) {
+        Profile newProfile = new Profile(lname,fname,dob);
+        TriState newTriState = new TriState(newProfile, major, Integer.parseInt(creditsCompleted), state);
+        return(add(newTriState));
+    }
+
+    /**
+     * Adds an International student to the roster if it passes all validity checks.
+     * @param fname first name of the student.
+     * @param lname last name of the student.
+     * @param dob date of birth of the student.
+     * @param major major of the student.
+     * @param creditsCompleted amount of credits completed by the student.
+     * @param isAbroad whether the student is studying abroad or not.
+     */
+    private String addInternational(String fname, String lname, String dob, String major, String creditsCompleted, String isAbroad) {
+        Profile newProfile = new Profile(lname,fname,dob);
+        International newInternational = new International(newProfile, major, Integer.parseInt(creditsCompleted), (isAbroad.equals("true")));
+        return(add(newInternational));
     }
 }
