@@ -12,11 +12,10 @@ public class TuitionManagerMain extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(TuitionManagerMain.class.getResource("TuitionManagerView.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 700, 700);
-        stage.setTitle("Hello World!");
+        stage.setTitle("Project 3: Tuition Manager");
         stage.setScene(scene);
         stage.show();
     }
-
     public static void main(String[] args) {
         launch();
     }

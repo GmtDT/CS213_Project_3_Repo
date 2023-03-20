@@ -14,8 +14,6 @@ public class TuitionManagerController {
 
     //Button Groups
     @FXML
-    private ToggleGroup btGroup_Location;
-    @FXML
     private ToggleGroup btGroup_State;
     @FXML
     private ToggleGroup btGroup_isResident;
@@ -40,11 +38,7 @@ public class TuitionManagerController {
     @FXML
     private RadioButton btITI;
     @FXML
-    private RadioButton btMATH;
-    @FXML
     private RadioButton btResident;
-    @FXML
-    private RadioButton btNonRes;
     @FXML
     private RadioButton btTriState;
     @FXML
@@ -165,7 +159,7 @@ public class TuitionManagerController {
             rosterOutput.setText("Please select a major.");
             return false;
         }
-        if(creditsRoster == null || creditsRoster.getText().trim().isEmpty() || !allowedCredits(creditsRoster.getText())){
+        if(creditsRoster == null || creditsRoster.getText().trim().isEmpty() || notAllowedCredits(creditsRoster.getText())){
             rosterOutput.setText("Please enter a valid credit amount.");
             return false;
         }
@@ -195,6 +189,7 @@ public class TuitionManagerController {
         }
         return true;
     }
+
     private boolean isValidEnrollmentSelection() {
         if(fnameEnrollment == null || fnameEnrollment.getText().trim().isEmpty() || isNotText(fnameEnrollment.getText())){ // need to make it so u cant type random symbols.
             enrollmentOutput.setText("Please enter a valid first name.");
@@ -208,7 +203,7 @@ public class TuitionManagerController {
             enrollmentOutput.setText("Please enter a valid date of birth.");
             return false;
         }
-        if(creditsEnrollment == null || creditsEnrollment.getText().trim().isEmpty() || !allowedCredits(creditsEnrollment.getText())){
+        if(creditsEnrollment == null || creditsEnrollment.getText().trim().isEmpty() || notAllowedCredits(creditsEnrollment.getText())){
             enrollmentOutput.setText("Please enter a valid credit amount.");
             return false;
         }
@@ -228,7 +223,7 @@ public class TuitionManagerController {
             scholarOutput.setText("Please enter a valid date of birth.");
             return false;
         }
-        if(amountScholar == null || amountScholar.getText().trim().isEmpty() || !isNumeric(amountScholar.getText())){
+        if(amountScholar == null || amountScholar.getText().trim().isEmpty() || isNotNumeric(amountScholar.getText())){
             scholarOutput.setText("Please enter a valid scholarship amount.");
             return false;
         }
@@ -243,29 +238,34 @@ public class TuitionManagerController {
         String dob = dobReformater(dobRoster.getValue().toString());
         Profile newProfile = new Profile(lnameRoster.getText(),fnameRoster.getText(),dob);
         Student newStudent = this.roster.getStudent(newProfile);
+        String reformattedDOB = dobReformater(dobRoster.getValue().toString());
         if(newStudent != null) {
             if (this.roster.remove(newStudent)) {
-                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " removed from the Roster.");
+                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " removed from the Roster.");
                 return;
             }
         }
-        rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " is not in the Roster.");
+        rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " is not in the Roster.");
 
     }
 
     @FXML
     protected void onChangeButtonClick() {
+        if(!isValidRosterSelectionAddition()){
+            return;
+        }
         String dob = dobReformater(dobRoster.getValue().toString());
         Profile profile = new Profile(lnameRoster.getText(), fnameRoster.getText(), dob);
         Resident tempResident = new Resident(profile,Major.UNDEFINED.toString(),Constant.UNDEFINED_CREDITS.getValue());
+        String reformattedDOB = dobReformater(dobRoster.getValue().toString());
         if (this.roster.contains(tempResident)) {                        //checks if the student is actually in the roster.
             if(this.roster.replaceMajor(tempResident,getSelectedMajor())){            //checks if the major can/should be replaced.
-                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " major changed to " + getSelectedMajor());
+                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " major changed to " + getSelectedMajor());
             } else {
-                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " already has this major");
+                rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " already has this major");
             }
         } else {
-            rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + dobRoster.getValue() + " is not in the Roster.");
+            rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " is not in the Roster.");
         }
     }
 
@@ -277,18 +277,21 @@ public class TuitionManagerController {
     @FXML
     protected void onEnrollButtonClick() {
         enrollmentOutput.setText("");
-        isValidEnrollmentSelection();
+        if(!isValidEnrollmentSelection()){
+            return;
+        }
+        String reformattedDOB = dobReformater(dobEnrollment.getValue().toString());
         int enrollCreditsInt = Integer.parseInt(creditsEnrollment.getText());
-        Profile enrollProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),dobEnrollment.getValue().toString());
+        Profile enrollProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),reformattedDOB);
         EnrollStudent enrollStudent = new EnrollStudent(enrollProfile, enrollCreditsInt);
         if(this.enrollment.contains(enrollStudent)){
             if(this.enrollment.isAlreadyTaking(enrollStudent,enrollCreditsInt)) {
-                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " already is enrolled in " + enrollCreditsInt + " credits.");
+                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB + " already is enrolled in " + enrollCreditsInt + " credits.");
             } else{
                 Student student = this.roster.getStudent(enrollProfile);
                 if(student.isValid(enrollCreditsInt)){
                     this.enrollment.setEnrollCredits(enrollStudent, enrollCreditsInt);
-                    enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " enrolled credits changed to " + enrollCreditsInt);
+                    enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB + " enrolled credits changed to " + enrollCreditsInt);
                 }else{
                     enrollmentOutput.setText(student.getType() + " " + enrollCreditsInt + ": invalid credit hours.");
                 }
@@ -297,12 +300,12 @@ public class TuitionManagerController {
             Student student = this.roster.getStudent(enrollProfile);
             if(student.isValid(enrollCreditsInt)){
                 this.enrollment.add(enrollStudent);
-                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " enrolled " + enrollCreditsInt + " credits.");
+                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB + " enrolled " + enrollCreditsInt + " credits.");
             }else{
                 enrollmentOutput.setText(student.getType() + " " + enrollCreditsInt + ": invalid credit hours.");
             }
         } else {
-            enrollmentOutput.setText("Cannot enroll: " + fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " is not in the roster.");
+            enrollmentOutput.setText("Cannot enroll: " + fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB + " is not in the roster.");
         }
     }
 
@@ -310,28 +313,32 @@ public class TuitionManagerController {
     protected void onDropButtonClick() {
         Profile dropProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),dobEnrollment.getValue().toString());
         EnrollStudent dropStudent = this.enrollment.getEnrollStudent(dropProfile);
+        String reformattedDOB = dobReformater(dobEnrollment.getValue().toString());
         if (!(dropStudent == null)) {
             if (this.enrollment.contains(dropStudent)) {
                 this.enrollment.remove(dropStudent);
-                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " dropped.");
+                enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB  + " dropped.");
                 return;
             }
         }
-        enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + dobEnrollment.getValue() + " is not enrolled.");
+        enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB  + " is not enrolled.");
     }
 
     @FXML
     protected void onUpdateButtonClick() {
         scholarOutput.setText("");
-        isValidScholarSelection();
-        Profile profile = new Profile(lnameScholar.getText(),fnameScholar.getText(),dobScholar.getValue().toString());
+        if(!isValidScholarSelection()){
+            return;
+        }
+        String reformattedDOB = dobReformater(dobScholar.getValue().toString());
+        Profile profile = new Profile(lnameScholar.getText(),fnameScholar.getText(),reformattedDOB);
         Student student = this.roster.getStudent(profile);
-        if(!isNumeric(amountScholar.getText())){
+        if(isNotNumeric(amountScholar.getText())){
             scholarOutput.setText("Amount is not an integer.");
             return;
         }
         if(!student.isResident() || !(enrollment.getEnrollStudent(profile).getCreditsEnrolled() >= TuitionValues.FULL_TIME_MIN.getValue())){
-            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + " part time student is not eligible for the scholarship.");
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " part time student is not eligible for the scholarship.");
             return;
         }
         if(Integer.parseInt(amountScholar.getText()) > TuitionValues.MAX_SCHOLARSHIP.getValue() || Integer.parseInt(amountScholar.getText()) <= 0){
@@ -341,23 +348,23 @@ public class TuitionManagerController {
         Resident resident = (Resident) student;
         if (this.roster.contains(resident)) {
             if(resident.getScholarship() == Integer.parseInt(amountScholar.getText())){
-                scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + " already has this scholarship");
+                scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " already has this scholarship");
                 return;
             }
             if(this.roster.replaceScholar(resident,amountScholar.getText())){
                 if(resident.getScholarship() == 0) {
                     resident.setScholarship(Integer.parseInt(amountScholar.getText()));
-                    scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + " awarded a scholarship of $" + amountScholar.getText());
+                    scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " awarded a scholarship of $" + amountScholar.getText());
                 }
                 else {
                     resident.setScholarship(Integer.parseInt(amountScholar.getText()));
-                    scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + ": scholarship amount updated.");
+                    scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + ": scholarship amount updated.");
                 }
             } else {
-                scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + " " + student.getType() + " is not eligible for the scholarship.");
+                scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " " + student.getType() + " is not eligible for the scholarship.");
             }
         } else {
-            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + dobScholar.getValue() + " is not in the Roster.");
+            scholarOutput.setText(fnameScholar.getText() + " " + lnameScholar.getText() + " " + reformattedDOB + " is not in the Roster.");
         }
     }
 
@@ -476,20 +483,20 @@ public class TuitionManagerController {
      * @param inputCredits credits to check.
      * @return true if they are valid, false if not.
      */
-    private boolean allowedCredits(String inputCredits) {
-        if(!isNumeric(inputCredits)){               //checks if the credits are a number.
+    private boolean notAllowedCredits(String inputCredits) {
+        if(isNotNumeric(inputCredits)){               //checks if the credits are a number.
             System.out.println("Credits completed invalid: not an integer!");
-            return false;
+            return true;
         }
         if(!(Double.parseDouble(inputCredits) % 1 == 0)){   //checks if the credits are an integer.
             System.out.println("Credits completed invalid: not an integer!");
-            return false;
+            return true;
         }
         if (Double.parseDouble(inputCredits) < 0) {   //checks if the credits given are a valid amount.
             System.out.println("Credits completed invalid: cannot be negative!");
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -497,12 +504,12 @@ public class TuitionManagerController {
      * @param string string to check.
      * @return true if numeric, false if not.
      */
-    private static boolean isNumeric(String string) {
+    private static boolean isNotNumeric(String string) {
         try {
             Double.parseDouble(string);
-            return true;
-        } catch(NumberFormatException e){
             return false;
+        } catch(NumberFormatException e){
+            return true;
         }
     }
 
@@ -568,18 +575,17 @@ public class TuitionManagerController {
     }
 
     private String processCommand(Scanner linescanner, String operationCode) {
-        switch(operationCode){
-            case "AR":                                                     // add a Resident student, for example, AR John Doe 4/3/2003 CS 29
-                return(addResident(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
-            case "AN":                                                     // add a NonResident student, for example, AN Leo Jones 4/21/2006 ITI 20
-                return(addNonResident(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
-            case "AT":                                                     // add a Tri state student, for example, AT Emma Miller 2/28/2003 CS 15 NY
-                return(addTriState(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
-            case "AI":                                                     // add an International student, for example, AI Oliver Chang 11/30/2000 BAIT 78 false
-                return(addInternational(linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next(),linescanner.next()));
-            default :
-                return("shouldn't get here");
-        }
+        return switch (operationCode) {
+            case "AR" ->                                                     // add a Resident student, for example, AR John Doe 4/3/2003 CS 29
+                    (addResident(linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next()));
+            case "AN" ->                                                     // add a NonResident student, for example, AN Leo Jones 4/21/2006 ITI 20
+                    (addNonResident(linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next()));
+            case "AT" ->                                                     // add a Tri state student, for example, AT Emma Miller 2/28/2003 CS 15 NY
+                    (addTriState(linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next()));
+            case "AI" ->                                                     // add an International student, for example, AI Oliver Chang 11/30/2000 BAIT 78 false
+                    (addInternational(linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next(), linescanner.next()));
+            default -> ("shouldn't get here");
+        };
     }
 
     /**
