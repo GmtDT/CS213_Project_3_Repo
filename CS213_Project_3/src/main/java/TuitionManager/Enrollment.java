@@ -134,6 +134,7 @@ public class Enrollment {
     /**
      * Prints out the enrollment array as a list in
      * string representation, in the same order of the array.
+     * @return string list of all enrolled students.
      */
     public String print() {
         StringBuilder toReturn = new StringBuilder();
@@ -149,6 +150,7 @@ public class Enrollment {
     /**
      * Prints out the tuition due for each enrolled student in the enrollment array.
      * @param roster reference to the Roster from the TuitionManager.
+     * @return string list of tuition due for all enrolled students.
      */
     public String printTuition(Roster roster) {
         StringBuilder toReturn = new StringBuilder();
@@ -172,9 +174,9 @@ public class Enrollment {
     }
 
     /**
-     * kjasdgbshkladgsadbhljbfladshfbg hjlafdsbghjlasfbdghjlasdbghjlasdbghjlsbagfhjlsdfbjlabl
-     * @param t
-     * @return
+     * Correctly formats the tuition due.
+     * @param t tuition amount to format
+     * @return correctly formated tuition amount string.
      */
     public String formatDouble(double t){
         String pattern = ".00";
@@ -187,6 +189,7 @@ public class Enrollment {
      * Adds the credits a student was enrolled in to their completed credits
      * and prints out a list of all students who are now eligible for graduation.
      * @param roster reference to the Roster from the TuitionManager.
+     * @return string list of all students eligible for graduation.
      */
     public String semesterEnd(Roster roster) {
         StringBuilder toReturn = new StringBuilder();

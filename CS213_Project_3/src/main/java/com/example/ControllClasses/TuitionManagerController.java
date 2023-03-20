@@ -3,12 +3,18 @@ package com.example.ControllClasses;
 import TuitionManager.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+/**
+ * The controller class for the scene builder class
+ * It converts all the functionality of the previous
+ * TuitionManager class into GUI based output instead
+ * of terminal based. Stores the roster and enrollment.
+ * @author Dylan Turner, Noor Hasan
+ */
 public class TuitionManagerController {
     private final Roster roster = new Roster();
     private final Enrollment enrollment = new Enrollment();
@@ -81,6 +87,12 @@ public class TuitionManagerController {
     @FXML
     private TextArea displayOutput;
 
+    /**
+     * This method is run when the Add button is clicked
+     * in the Roster tab. It will create and add a student
+     * to the Roster based on the input from the user in
+     * the text fields.
+     */
     @FXML
     protected void onAddButtonClick() {
         rosterOutput.setText("");
@@ -118,6 +130,12 @@ public class TuitionManagerController {
         rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " is already in the roster.");
     }
 
+    /**
+     * Reformats a date of birth returned from a Date Picker node
+     * to make it correctly ordered for the Date constructor.
+     * @param wrongDOB the date of birth from the Date Picker.
+     * @return the date as a string in the format "mm/dd/yyyy".
+     */
     private String dobReformater(String wrongDOB) {
         StringTokenizer splitDate = new StringTokenizer(wrongDOB, "-");
         int year = Integer.parseInt(splitDate.nextToken());
@@ -126,6 +144,11 @@ public class TuitionManagerController {
         return(month + "/" + day + "/" + year);
     }
 
+    /**
+     * Determines which major button
+     * the user has selected.
+     * @return the major that is currently selected as a string.
+     */
     private String getSelectedMajor() {
         String selectedMajor;
         if(btBAIT.isSelected()){
@@ -142,9 +165,13 @@ public class TuitionManagerController {
         return selectedMajor;
     }
 
-    //checks if the text field has valid entry, and if any buttons are not selected.
+    /**
+     * Helper method to check if the user has selected a valid
+     * amount of inputs in the Roster tab for the desired action.
+     * @return true is valid amount of inputs, false if not.
+     */
     private boolean isValidRosterSelection() {
-        if(fnameRoster == null || fnameRoster.getText().trim().isEmpty() || isNotText(fnameRoster.getText())){ // need to make it so u cant type random symbols.
+        if(fnameRoster == null || fnameRoster.getText().trim().isEmpty() || isNotText(fnameRoster.getText())){
             rosterOutput.setText("Please enter a valid first name.");
             return false;
         }
@@ -175,8 +202,13 @@ public class TuitionManagerController {
         return true;
     }
 
+    /**
+     * Helper method to check if the user has selected a valid
+     * amount of inputs in the Roster tab for the desired action.
+     * @return true is valid amount of inputs, false if not.
+     */
     private boolean isValidRosterSelectionAddition() {
-        if (fnameRoster == null || fnameRoster.getText().trim().isEmpty() || isNotText(fnameRoster.getText())) { // need to make it so u cant type random symbols.
+        if (fnameRoster == null || fnameRoster.getText().trim().isEmpty() || isNotText(fnameRoster.getText())) {
             rosterOutput.setText("Please enter a valid first name.");
             return false;
         }
@@ -191,8 +223,13 @@ public class TuitionManagerController {
         return true;
     }
 
+    /**
+     * Helper method to check if the user has selected a valid
+     * amount of inputs in the Enrollment tab for the desired action.
+     * @return true is valid amount of inputs, false if not.
+     */
     private boolean isValidEnrollmentSelection() {
-        if(fnameEnrollment == null || fnameEnrollment.getText().trim().isEmpty() || isNotText(fnameEnrollment.getText())){ // need to make it so u cant type random symbols.
+        if(fnameEnrollment == null || fnameEnrollment.getText().trim().isEmpty() || isNotText(fnameEnrollment.getText())){
             enrollmentOutput.setText("Please enter a valid first name.");
             return false;
         }
@@ -211,6 +248,11 @@ public class TuitionManagerController {
         return true;
     }
 
+    /**
+     * Helper method to check if the user has selected a valid
+     * amount of inputs in the Scholarship tab for the desired action.
+     * @return true is valid amount of inputs, false if not.
+     */
     private boolean isValidScholarSelection() {
         if(fnameScholar == null || fnameScholar.getText().trim().isEmpty() || isNotText(fnameScholar.getText())){ // need to make it so u cant type random symbols.
             scholarOutput.setText("Please enter a valid first name.");
@@ -231,6 +273,11 @@ public class TuitionManagerController {
         return true;
     }
 
+    /**
+     * Run when the remove button is clicked in the Roster tab.
+     * Removes the specified student from the roster if they
+     * are in it.
+     */
     @FXML
     protected void onRemoveButtonClick() {
         if(!isValidRosterSelectionAddition()){
@@ -247,9 +294,12 @@ public class TuitionManagerController {
             }
         }
         rosterOutput.setText(fnameRoster.getText() + " " + lnameRoster.getText() + " " + reformattedDOB + " is not in the Roster.");
-
     }
 
+    /**
+     * Run when the Change Major button is clicked in the Roster tab.
+     * Changes the major of the specified student if they are valid.
+     */
     @FXML
     protected void onChangeButtonClick() {
         if(!isValidRosterSelectionAddition()){
@@ -270,11 +320,19 @@ public class TuitionManagerController {
         }
     }
 
+    /**
+     * Run when the Load from File button is clicked in the Roster tab.
+     * Reads a from a text file a list of students to be added to the roster.
+     */
     @FXML
     protected void onLoadButtonClick() {
         readFile();
     }
 
+    /**
+     * Runs when the Enroll button is clicked in the Enrollment tab.
+     * Enrolls a specified student to the enrollment if they are valid.
+     */
     @FXML
     protected void onEnrollButtonClick() {
         enrollmentOutput.setText("");
@@ -310,6 +368,10 @@ public class TuitionManagerController {
         }
     }
 
+    /**
+     * Runs when the Drop button is clicked in the Enrollment tab.
+     * Drops a specified student from the enrollment if they are valid.
+     */
     @FXML
     protected void onDropButtonClick() {
         Profile dropProfile = new Profile(lnameEnrollment.getText(),fnameEnrollment.getText(),dobEnrollment.getValue().toString());
@@ -325,6 +387,10 @@ public class TuitionManagerController {
         enrollmentOutput.setText(fnameEnrollment.getText() + " " + lnameEnrollment.getText() + " " + reformattedDOB  + " is not enrolled.");
     }
 
+    /**
+     * Runs when the Update Scholarship button is clicked in the Scholarship tab.
+     * Updates the scholarship of the specified student.
+     */
     @FXML
     protected void onUpdateButtonClick() {
         scholarOutput.setText("");
@@ -369,6 +435,10 @@ public class TuitionManagerController {
         }
     }
 
+    /**
+     * Runs when the Print by Profile button is clicked in the
+     * Display tab. Prints the roster sorted by profile.
+     */
     @FXML
     protected void onPrintButtonClick() {
         if(!this.roster.isEmpty()){
@@ -379,6 +449,10 @@ public class TuitionManagerController {
         displayOutput.setText("The roster is empty.");
     }
 
+    /**
+     * Runs when the Print by Major button is clicked in the
+     * Display tab. Prints the roster sorted by major.
+     */
     @FXML
     protected void onPrintMajorButtonClick() {
         if(!this.roster.isEmpty()){
@@ -389,6 +463,10 @@ public class TuitionManagerController {
         displayOutput.setText("The roster is empty.");
     }
 
+    /**
+     * Runs when the Print by Standing button is clicked in the
+     * Display tab. Prints the roster sorted by standing.
+     */
     @FXML
     protected void onPrintStandingButtonClick() {
         if(!this.roster.isEmpty()){
@@ -399,36 +477,65 @@ public class TuitionManagerController {
         displayOutput.setText("The roster is empty.");
     }
 
+    /**
+     * Runs when the RBS button is clicked in the Display tab.
+     * Prints a list of the students in RBS.
+     */
     @FXML
     protected void onRBSButtonClick() {
         printList("RBS");
     }
 
+    /**
+     * Runs when the SAS button is clicked in the Display tab.
+     * Prints a list of the students in SAS.
+     */
     @FXML
     protected void onSASButtonClick() {
         printList("SAS");
     }
 
+    /**
+     * Runs when the SC&I button is clicked in the Display tab.
+     * Prints a list of the students in SC&I.
+     */
     @FXML
     protected void onSCIButtonClick() {
         printList("SC&I");
     }
 
+    /**
+     * Runs when the SOE button is clicked in the Display tab.
+     * Prints a list of the students in SOE.
+     */
     @FXML
     protected void onSOEButtonClick() {
         printList("SOE");
     }
 
+    /**
+     * Runs when the Print Enrolled Students button is clicked in the Display tab.
+     * Prints a list of the students enrolled in the current semester.
+     */
     @FXML
     protected void onPrintEnrolledButtonClick() {
         displayOutput.setText(this.enrollment.print());
     }
 
+    /**
+     * Runs when the Print Tuition Due button is clicked in the Display tab.
+     * Prints a list of tuition's due for the students enrolled in the current semester.
+     */
     @FXML
     protected void onPrintTuitionButtonClick() {
         displayOutput.setText(this.enrollment.printTuition(this.roster));
     }
 
+    /**
+     * Runs when the Semester End button is clicked in the Display tab.
+     * Updates the credits completed by each student enrolled, and displays list
+     * of students eligible for graduation.
+     */
     @FXML
     protected void onSemesterEndButtonClick() {
         displayOutput.setText(this.enrollment.semesterEnd(this.roster));
@@ -442,6 +549,10 @@ public class TuitionManagerController {
             displayOutput.setText(this.roster.list(school));
     }
 
+    /**
+     * Runs when the Resident radio button is selected.
+     * Enables and disables appropriate dependent radio buttons.
+     */
     @FXML
     protected void onResSelect() {
         btTriState.setDisable(true);
@@ -456,12 +567,20 @@ public class TuitionManagerController {
         btInternational.setSelected(false);
     }
 
+    /**
+     * Runs when the NonResident radio button is selected.
+     * Enables and disables appropriate dependent radio buttons.
+     */
     @FXML
     protected void onNonResSelect() {
         btTriState.setDisable(false);
         btInternational.setDisable(false);
     }
 
+    /**
+     * Runs when the TriState radio button is selected.
+     * Enables and disables appropriate dependent radio buttons.
+     */
     @FXML
     protected void onTristateSelect() {
         btNY.setDisable(false);
@@ -470,6 +589,10 @@ public class TuitionManagerController {
         boxStudyAbroad.setSelected(false);
     }
 
+    /**
+     * Runs when the International radio button is selected.
+     * Enables and disables appropriate dependent radio buttons.
+     */
     @FXML
     protected void onInternationalSelect() {
         btNY.setDisable(true);
@@ -482,7 +605,7 @@ public class TuitionManagerController {
     /**
      * Helper method for add and enroll command to check if the amount of credits are valid.
      * @param inputCredits credits to check.
-     * @return true if they are valid, false if not.
+     * @return true if they are not valid, false if not.
      */
     private boolean notAllowedCredits(String inputCredits) {
         if(isNotNumeric(inputCredits)){               //checks if the credits are a number.
@@ -501,9 +624,9 @@ public class TuitionManagerController {
     }
 
     /**
-     * Checks if a given string is numeric.
+     * Checks if a given string is not numeric.
      * @param string string to check.
-     * @return true if numeric, false if not.
+     * @return true if not numeric, false if is.
      */
     private static boolean isNotNumeric(String string) {
         try {
@@ -514,6 +637,11 @@ public class TuitionManagerController {
         }
     }
 
+    /**
+     * Checks if a given string contains any digits.
+     * @param string string to be checked.
+     * @return true if contains any digits, false if not.
+     */
     private static boolean isNotText(String string) {
         char[] chars = string.toCharArray();
         for(char c : chars){
@@ -527,7 +655,6 @@ public class TuitionManagerController {
     /**
      * Helper method for the add() method, checks if a student is allowed to
      * be entered into the roster.
-     *
      * @param student student's date of birth.
      * @return false if the student fails any checks, true otherwise.
      */
@@ -551,8 +678,8 @@ public class TuitionManagerController {
     }
 
     /**
-     * Helper method for isAllowed() method, checks if student is allowed age.
-     * param today date object containing current day.
+     * Helper method for isAllowedDate() method, checks if student is allowed age.
+     * @param today date object containing current day.
      * @param dob the student's date of birth.
      * @return false if the student is too young, true otherwise.
      */
@@ -575,6 +702,13 @@ public class TuitionManagerController {
         return dayDifference >= 0;
     }
 
+    /**
+     * Helper method for the readFile() method.
+     * Process commands input from the file.
+     * @param linescanner scanner for each line of the file.
+     * @param operationCode operation code for given command.
+     * @return string representation of student that was added.
+     */
     private String processCommand(Scanner linescanner, String operationCode) {
         return switch (operationCode) {
             case "AR" ->                                                     // add a Resident student, for example, AR John Doe 4/3/2003 CS 29
@@ -616,7 +750,7 @@ public class TuitionManagerController {
     }
 
     /**
-     * Adds a student to the Roster if it passes all the validity checks.
+     * Adds a student to the Roster.
      * @param student student to be added.
      */
     private String add(Student student) {

@@ -155,9 +155,7 @@ public abstract class Student implements Comparable<Student> {
             return "(non-resident)" + " " +  this.getArea();
         } else {
             return "(resident)";
-
         }
-
     }
 
     /**

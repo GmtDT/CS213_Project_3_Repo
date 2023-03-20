@@ -44,7 +44,7 @@ public class Roster {
                 return roster[i];
             }
         }
-        System.out.println("poopstudent null");
+//        System.out.println("poopstudent null");
         return null;
     }
 
@@ -149,36 +149,6 @@ public class Roster {
     }
 
     /**
-     * Prints out the roster sorted by profile.
-     */
-    public void print() {
-        sort(SortType.PROFILE);
-        System.out.println("* Student roster sorted by last name, first name, DOB **");
-        printRoster();
-        System.out.println("* end of roster **");
-    }
-
-    /**
-     * Prints out the roster sorted by major.
-     */
-    public void printBySchoolMajor() {
-        sort(SortType.MAJOR);
-        System.out.println("* Student roster sorted by school, major **");
-        printRoster();
-        System.out.println("* end of roster **");
-    }
-
-    /**
-     * Prints out the roster sorted by standing.
-     */
-    public void printByStanding() {
-        sort(SortType.STANDING);
-        System.out.println("* Student roster sorted by standing");
-        printRoster();
-        System.out.println("* end of roster **");
-    }
-
-    /**
      * In place sorting algorithm used to sort the roster by a desired sort type.
      * This is a modified version of the selection sort algorithm.
      * @param type the sort type that should be used.
@@ -197,6 +167,7 @@ public class Roster {
             this.roster[i] = temp;
         }
     }
+
     /**
      * Helper method for the selection sort algorithm. Determines whether one student
      * should be before another student based on the sort type.
@@ -227,6 +198,7 @@ public class Roster {
      * Helper method for the printList() method. Determines how many students
      * are in the specified school and displays them.
      @param school school that students should belong to.
+     @return string list of all students in the school.
      */
     public String list(String school) {
         int amount = 0;
@@ -249,10 +221,9 @@ public class Roster {
      * @param major the major that it should be changed to.
      */
     public boolean replaceMajor(Student student, String major){
-        System.out.println(major); //asdklajnsfjandsgk askg ars gjkae
         int position = find(student);
         if(position != -1){
-            if(this.roster[position].getMajor().toString().equals(major)){ System.out.println("first catch"); return false;}
+            if(this.roster[position].getMajor().toString().equals(major)){ return false;}
             for (Major allowedMajor: Major.values()) {
                 if (major.toUpperCase().equals(allowedMajor.toString())) {
                     this.roster[position].setMajor(allowedMajor);
